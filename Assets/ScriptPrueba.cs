@@ -44,8 +44,8 @@ public class ScriptPrueba : MonoBehaviour
         //Debug.Log("EJE HORIZONTAL: " + Input.GetAxis("Horizontal"));
         //Debug.Log("EJE VERTICAL: " + Input.GetAxis("Vertical"));
 
-        Debug.Log("EJE HORIZONTAL VIEW: " + Input.GetAxis("HorizontalView"));
-        Debug.Log("EJE VERTICAL VIEW: " + Input.GetAxis("VerticalView"));
+        //Debug.Log("EJE HORIZONTAL VIEW: " + Input.GetAxis("HorizontalView"));
+        //Debug.Log("EJE VERTICAL VIEW: " + Input.GetAxis("VerticalView"));
 
         //Debug.Log("BOTON VERTICAL:" + Input.GetButton("Vertical"));
         estado = EstadoCubo.Idle;
@@ -69,7 +69,7 @@ public class ScriptPrueba : MonoBehaviour
         transform.Rotate(new Vector3(0f, Input.GetAxis("HorizontalView"), 0f));
 
         // MOVIMIENTO CAMARA
-        camara.Rotate(new Vector3(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), 0f));
+        //camara.Rotate(new Vector3(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), 0f));
 
         //Debug.Log("Vector FORWARD: " + transform.forward);
         //Debug.Log("Magnitud FORWARD: " + transform.forward.magnitude);
@@ -100,5 +100,29 @@ public class ScriptPrueba : MonoBehaviour
 
         // ESCALA DE OBJETO
         Debug.Log("Mi escala es: " + this.gameObject.transform.localScale);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // AL TOCAR LA COLISION POR PRIMERA VEZ
+        // UNICA VEZ
+        if(collision.gameObject.tag == "Obstaculo")
+            Debug.Log("CHOQUE AL ENTRAR. OBJETO CHOCADO: " + collision.gameObject.name);
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        // COLISION CONTINUA, MIENTRAS SE ESTE CHOCANDO
+        // MUCHAS VECES MIENTRAS SE ESTE CHOCANDO
+        if (collision.gameObject.tag == "Obstaculo")
+            Debug.Log("ME MANTENGO CHOCANDO");
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        // AL MOMENTO DE SALIR DE LA COLISION
+        // UNICA VEZ
+        if (collision.gameObject.tag == "Obstaculo")
+            Debug.Log("SALI DEL CHOQUE");
     }
 }
