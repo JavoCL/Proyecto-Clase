@@ -16,9 +16,11 @@ public class ScriptPrueba : MonoBehaviour
 
     public enum Poderes { None, Normal, FlorFuego, FlorHielo, Pluma };
     public enum EstadoCubo { Idle, Moviendo, Saltando };
+    public enum ClaseJugador { Rogue, Hunter, Mage};
 
     public Poderes poderesCubo;
     public EstadoCubo estado;
+    public ClaseJugador clase;
 
     public string nombreCubo;
     public GameObject objeto;
@@ -106,7 +108,7 @@ public class ScriptPrueba : MonoBehaviour
     {
         // AL TOCAR LA COLISION POR PRIMERA VEZ
         // UNICA VEZ
-        if(collision.gameObject.tag == "Obstaculo")
+        if (collision.gameObject.tag == "Obstaculo")
             Debug.Log("CHOQUE AL ENTRAR. OBJETO CHOCADO: " + collision.gameObject.name);
     }
 
@@ -124,5 +126,23 @@ public class ScriptPrueba : MonoBehaviour
         // UNICA VEZ
         if (collision.gameObject.tag == "Obstaculo")
             Debug.Log("SALI DEL CHOQUE");
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "AreaLlegada")
+            Debug.Log("ENTRE A LA COLISION LOGICA");
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "AreaLlegada")
+            Debug.Log("ME QUEDO EN COLISION LOGICA");
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "AreaLlegada")
+            Debug.Log("SALI A LA COLISION LOGICA");
     }
 }
