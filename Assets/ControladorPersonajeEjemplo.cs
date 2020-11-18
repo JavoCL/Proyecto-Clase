@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScriptPrueba : MonoBehaviour
+public class ControladorPersonajeEjemplo : MonoBehaviour
 {
+    [Header("Variables Estado Personaje")]
     [Range(0f, 100f)]
     public float vidaCubo; // o HP
     public float velocidadCubo; // Velocidad actual del cubo
     public float velocidadMaxCubo; // Velocidad máxima del cubo
+    public float fuerzaSaltoCubo;
 
     [Range(0, 32)]
     public int municionCubo;
@@ -16,16 +18,24 @@ public class ScriptPrueba : MonoBehaviour
 
     public enum Poderes { None, Normal, FlorFuego, FlorHielo, Pluma };
     public enum EstadoCubo { Idle, Moviendo, Saltando };
-    public enum ClaseJugador { Rogue, Hunter, Mage};
+    public enum ClaseJugador { Rogue, Hunter, Mage };
 
     public Poderes poderesCubo;
     public EstadoCubo estado;
     public ClaseJugador clase;
 
     public string nombreCubo;
+
+    [Header("Animacion Personaje")]
+    public Animator animatorPersonaje;
+
+    [Header("Varios")]
     public GameObject objeto;
 
     public Transform camara;
+    public bool unaVez;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +45,7 @@ public class ScriptPrueba : MonoBehaviour
 
         //transform.position = new Vector3(transform.position.x + 7f, transform.position.y, transform.position.z);
         //transform.Translate(7f, 0f, 0f);
+        animatorPersonaje = this.transform.GetChild(0).GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -50,25 +61,42 @@ public class ScriptPrueba : MonoBehaviour
         //Debug.Log("EJE VERTICAL VIEW: " + Input.GetAxis("VerticalView"));
 
         //Debug.Log("BOTON VERTICAL:" + Input.GetButton("Vertical"));
-        estado = EstadoCubo.Idle;
 
+        if (Input.GetButtonDown("Crouch"))
+        {
+            animatorPersonaje.SetBool("crouchBool", !animatorPersonaje.GetBool("crouchBool"));
+        }
 
         // MOVIMIENTO PERSONAJE
         //if (Input.GetAxis("Vertical") != 0f || Input.GetAxis("Horizontal") != 0f)
-        if (Input.GetAxis("Horizontal") != 0f || Input.GetAxis("Vertical") != 0)
+        if (Input.GetButton("Vertical"))
         {
-            if (Input.GetAxis("Jump") != 0f)
-            {
-                estado = EstadoCubo.Saltando;
-            }
-            else // Adelante/Atras/Izquierda/Derecha
-            {
+            if(estado != EstadoCubo.Saltando)
                 estado = EstadoCubo.Moviendo;
-            }
-            transform.Translate(((new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump"), Input.GetAxis("Vertical"))) * velocidadCubo));
+
+            transform.Translate(((new Vector3(Input.GetAxis("HorizontalView"), 0f, Input.GetAxis("Vertical"))) * velocidadCubo));
+            animatorPersonaje.SetBool("walkBool", true);
+        }
+        else
+        {
+            animatorPersonaje.SetBool("walkBool", false);
+            //estado = EstadoCubo.Idle;
         }
 
-        transform.Rotate(new Vector3(0f, Input.GetAxis("HorizontalView"), 0f));
+
+        if (Input.GetAxis("Jump") != 0f)
+        {
+            if (estado != EstadoCubo.Saltando)
+            {
+                estado = EstadoCubo.Saltando;
+                this.GetComponent<Rigidbody>().AddForce(new Vector3(0f, Input.GetAxis("Jump") * fuerzaSaltoCubo, 0f));
+                animatorPersonaje.SetTrigger("jumpTrigger");
+            }
+        }
+
+        //Debug.Log("AXIS VERTICAL: " + Input.GetAxis("Vertical").ToString());
+
+        transform.Rotate(new Vector3(0f, Input.GetAxis("Horizontal") * 0.5f, 0f));
 
         // MOVIMIENTO CAMARA
         //camara.Rotate(new Vector3(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), 0f));
@@ -84,8 +112,6 @@ public class ScriptPrueba : MonoBehaviour
         //{
         //    Debug.Log("EL CUBO ESTA BIEN");
         //}
-
-
     }
 
     public void ImprimeTransform()
@@ -132,12 +158,23 @@ public class ScriptPrueba : MonoBehaviour
     {
         if (other.gameObject.tag == "AreaLlegada")
             Debug.Log("ENTRE A LA COLISION LOGICA");
+        if (other.gameObject.tag == "Suelo")
+        {
+            if (estado == EstadoCubo.Saltando)
+            {
+                Debug.Log("ATERRIZANDO!");
+                animatorPersonaje.SetTrigger("landingTrigger");
+                estado = EstadoCubo.Idle;
+            }
+        }
     }
 
     private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.tag == "AreaLlegada")
             Debug.Log("ME QUEDO EN COLISION LOGICA");
+        if (other.gameObject.tag == "Suelo")
+            Debug.Log("ESTOY TOCANDO EL SUELO");
     }
 
     private void OnTriggerExit(Collider other)

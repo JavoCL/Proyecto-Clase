@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Obstaculo
   - AreaLlegada
+  - Suelo
   layers:
   - Default
   - TransparentFX

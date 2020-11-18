@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Vehiculo:ScriptPrueba
+public class Vehiculo : ControladorPersonajeEjemplo
 {
     public float velocidadMax;
     public string color;

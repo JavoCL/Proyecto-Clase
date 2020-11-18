@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SectorMage : MonoBehaviour
 {
+    [Header("NNN")]
     public GameObject puerta;
     // Start is called before the first frame update
     void Start()
@@ -23,7 +24,7 @@ public class SectorMage : MonoBehaviour
         {
             Debug.Log("ES PLAYER");
 
-            if(other.gameObject.GetComponent<ScriptPrueba>().clase == ScriptPrueba.ClaseJugador.Mage)
+            if(other.gameObject.GetComponent<ControladorPersonajeEjemplo>().clase == ControladorPersonajeEjemplo.ClaseJugador.Mage)
             {
                 Debug.Log("HEY! BIENVENIDO. PUEDES PASAR");
                 puerta.SetActive(false);
