@@ -23,7 +23,7 @@ public class controladorBlendTree : MonoBehaviour
     {
         valorHorizontal = Input.GetAxis("Horizontal");
         valorVertical = Input.GetAxis("Vertical");
-        inputJump = Input.GetAxis("Vertical");
+        inputJump = Input.GetAxis("Jump");
 
         //animatorBlendTree.SetFloat("horizontalFloat", valorHorizontal);
         //animatorBlendTree.SetFloat("verticalFloat", valorVertical);
