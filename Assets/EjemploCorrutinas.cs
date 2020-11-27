@@ -22,7 +22,7 @@ public class EjemploCorrutinas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("CONTADOR TIEMPO: " + Time.deltaTime);
+        //Debug.Log("CONTADOR TIEMPO: " + Time.deltaTime);
 
         velocidad += Input.GetAxis("Jump")*Time.deltaTime;
     }
