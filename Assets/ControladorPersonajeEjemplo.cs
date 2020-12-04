@@ -34,10 +34,11 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
     public Transform camara;
     public bool unaVez;
     public ControladorCanvasPersonaje canvasPersonaje;
-
+    public AudioSource sonidoPasosPersonaje;
 
     [Header("Control Etapa")]
     public int puntaje;
+
 
 
 
@@ -80,11 +81,14 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
 
             transform.Translate(((new Vector3(Input.GetAxis("HorizontalView"), 0f, Input.GetAxis("Vertical"))) * velocidadCubo));
             animatorPersonaje.SetBool("walkBool", true);
+            if (sonidoPasosPersonaje.isPlaying == false)
+                sonidoPasosPersonaje.Play();
         }
         else
         {
             animatorPersonaje.SetBool("walkBool", false);
             //estado = EstadoCubo.Idle;
+            sonidoPasosPersonaje.Stop();
         }
 
 
