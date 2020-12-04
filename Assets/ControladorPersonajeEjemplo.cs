@@ -31,9 +31,13 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
 
     [Header("Varios")]
     public GameObject objeto;
-
     public Transform camara;
     public bool unaVez;
+    public ControladorCanvasPersonaje canvasPersonaje;
+
+
+    [Header("Control Etapa")]
+    public int puntaje;
 
 
 
@@ -112,6 +116,9 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
         //{
         //    Debug.Log("EL CUBO ESTA BIEN");
         //}
+
+        canvasPersonaje.textoSalud.text = "HP: " + vidaCubo;
+        canvasPersonaje.textoPuntaje.text = "SCORE: " + puntaje;
     }
 
     public void ImprimeTransform()
@@ -135,7 +142,11 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
         // AL TOCAR LA COLISION POR PRIMERA VEZ
         // UNICA VEZ
         if (collision.gameObject.tag == "Obstaculo")
+        {
             Debug.Log("CHOQUE AL ENTRAR. OBJETO CHOCADO: " + collision.gameObject.name);
+
+            vidaCubo -= 10f;
+        }
     }
 
     private void OnCollisionStay(Collision collision)
@@ -154,6 +165,8 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
             Debug.Log("SALI DEL CHOQUE");
     }
 
+    bool scoreUnaVez = false;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "AreaLlegada")
@@ -166,6 +179,14 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
                 animatorPersonaje.SetTrigger("landingTrigger");
                 estado = EstadoCubo.Idle;
             }
+        }
+
+        if(other.gameObject.tag == "ScoreZone" && scoreUnaVez == false)
+        {
+            Debug.Log("ANOTAMOS PUNTAJE!");
+            other.gameObject.GetComponent<Animator>().SetTrigger("scoringTrigger");
+            puntaje += 100;
+            scoreUnaVez = true;
         }
     }
 

@@ -6,6 +6,7 @@ public class SectorMage : MonoBehaviour
 {
     [Header("NNN")]
     public GameObject puerta;
+    public bool seCumplioObjetivo = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,8 +27,16 @@ public class SectorMage : MonoBehaviour
 
             if(other.gameObject.GetComponent<ControladorPersonajeEjemplo>().clase == ControladorPersonajeEjemplo.ClaseJugador.Mage)
             {
-                Debug.Log("HEY! BIENVENIDO. PUEDES PASAR");
-                puerta.SetActive(false);
+                if(other.gameObject.GetComponent<ControladorPersonajeEjemplo>().puntaje > 0f)
+                {
+                    Debug.Log("HEY! BIENVENIDO. PUEDES PASAR");
+                    puerta.SetActive(false);
+                }
+                else
+                {
+                    Debug.Log("NO PUEDES PASAR, NO CONSEGUISTE EL OBJETIVO");
+                    puerta.SetActive(true);
+                }
             }
             else
             {
