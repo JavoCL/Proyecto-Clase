@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class ControladorPersonajeEjemplo : MonoBehaviour
 {
+    [Header("Configuraciones Generales")]
+    public string nombrePlayer;
     [Header("Variables Estado Personaje")]
     [Range(0f, 100f)]
     public float vidaCubo; // o HP
@@ -38,10 +41,7 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
 
     [Header("Control Etapa")]
     public int puntaje;
-
-
-
-
+         
     // Start is called before the first frame update
     void Start()
     {
@@ -51,6 +51,10 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
         //transform.position = new Vector3(transform.position.x + 7f, transform.position.y, transform.position.z);
         //transform.Translate(7f, 0f, 0f);
         animatorPersonaje = this.transform.GetChild(0).GetComponent<Animator>();
+        nombrePlayer = (FindObjectOfType<PruebaInterEscena>() != null ? FindObjectOfType<PruebaInterEscena>().nombrePlayer : "NO HAY NOMBRE");
+
+        //Debug.Log("Data Path: " + Application.dataPath);
+        //Debug.Log("Persistent Data Path: " + Application.persistentDataPath);
     }
 
     // Update is called once per frame
@@ -174,7 +178,11 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "AreaLlegada")
+        {
             Debug.Log("ENTRE A LA COLISION LOGICA");
+            GuardarDatos();
+        }
+            
         if (other.gameObject.tag == "Suelo")
         {
             if (estado == EstadoCubo.Saltando)
@@ -207,4 +215,43 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
         if (other.gameObject.tag == "AreaLlegada")
             Debug.Log("SALI A LA COLISION LOGICA");
     }
+
+    public void GuardarDatos()
+    {
+        string json;
+
+        json = JsonUtility.ToJson(this);
+
+        Debug.Log("JSON: " + json);
+
+        File.WriteAllText(Application.persistentDataPath + "/jsonControladorPersonaje.js", json);
+    }
+
+    public void GuardarDatosJSON()
+    {
+        string json = "";
+        DatosPlayer datos = new DatosPlayer();
+
+        datos.nombrePlayer = this.nombrePlayer;
+        datos.vidaCubo = this.vidaCubo;
+        datos.puntaje = this.puntaje;
+        datos.municionCubo = this.municionCubo;
+        datos.fueDañado = this.fueDañado;
+
+        json = JsonUtility.ToJson(datos);
+
+        Debug.Log("EL RESULTADO DEL JSON ES: " + json);
+
+        File.WriteAllText(Application.persistentDataPath + "/jsonEjemplo.js", json);
+    }
+}
+
+[System.Serializable]
+public class DatosPlayer
+{
+    public string nombrePlayer;
+    public float vidaCubo;
+    public int municionCubo;
+    public bool fueDañado;
+    public int puntaje;
 }
