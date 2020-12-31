@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ControladorEtapa : MonoBehaviour
 {
+    [Header("Configuraciones Generales")]
     public SectorMage sectorMage;
     public ControladorPersonajeEjemplo controladorPersonaje;
 
@@ -11,8 +13,16 @@ public class ControladorEtapa : MonoBehaviour
     public float tiempoActual;
     public bool timerCorriendo = false;
     public bool etapaTerminada;
+    public bool hayVictoria = false;
 
     ControladorEscenaMenu controladorEscenaMenu;
+    public AudioSource musicaFondo;
+    public AudioSource audioPasos;
+
+    [Header("Configuraciones Victoria-Derrota")]
+    public AudioSource musicaVictoria;
+    public AudioSource musicaDerrota;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +31,7 @@ public class ControladorEtapa : MonoBehaviour
         // SI EXISTE EL OBJETO QUE NOS TRAJIMOS DE LA ESCENA INICIAL
         if (controladorEscenaMenu)
         {
-            if(controladorEscenaMenu.hayDatos)
+            if (controladorEscenaMenu.hayDatos)
             {
                 Debug.Log("EXISTEN DATOS. SE CARGA ESCENA GUARDADA PREVIAMENTE");
                 EscenaCargada();
@@ -38,6 +48,9 @@ public class ControladorEtapa : MonoBehaviour
             Debug.Log("NO EXISTE OBJETO. SE CREA ESCENA NUEVA");
             EscenaNueva();
         }
+
+        StartCoroutine(_FinalEtapa());
+        StartCoroutine(_Loop());
     }
 
     public void EscenaNueva()
@@ -75,6 +88,7 @@ public class ControladorEtapa : MonoBehaviour
             // HAY VICTORIA
             timerCorriendo = false;
             etapaTerminada = true;
+            hayVictoria = true;
         }
 
         if (controladorPersonaje.vidaCubo <= 0f)
@@ -83,6 +97,7 @@ public class ControladorEtapa : MonoBehaviour
             timerCorriendo = false;
             Debug.Log("PERDISTE! TE MATARON");
             etapaTerminada = true;
+            hayVictoria = false;
         }
 
         if (tiempoActual <= 0f)
@@ -91,12 +106,7 @@ public class ControladorEtapa : MonoBehaviour
             timerCorriendo = false;
             Debug.Log("PERDISTE! SE TE ACABO EL TIEMPO");
             etapaTerminada = true;
-        }
-
-        if (etapaTerminada == true)
-        {
-            controladorPersonaje.enabled = false;
-            controladorPersonaje.animatorPersonaje.SetBool("walkBool", false);
+            hayVictoria = false;
         }
     }
 
@@ -114,6 +124,63 @@ public class ControladorEtapa : MonoBehaviour
         }
         while (tiempoActual > 0f && timerCorriendo == true);
     }
+
+    IEnumerator _FinalEtapa()
+    {
+        Debug.Log("ESPERANDO EL FINAL DE ETAPA");
+        yield return new WaitUntil(() => etapaTerminada == true);
+
+        Debug.Log("COMENZANDO EL FINAL DE ETAPA");
+
+        controladorPersonaje.enabled = false;
+        controladorPersonaje.animatorPersonaje.SetBool("walkBool", false);
+
+        musicaFondo.Stop();
+        audioPasos.Stop();
+
+        controladorPersonaje.canvasPersonaje.uiGameplay.SetActive(false);
+        controladorPersonaje.canvasPersonaje.uiFinal.SetActive(true);
+
+        if (hayVictoria == true)
+        {
+            controladorPersonaje.canvasPersonaje.textoVictoria.SetActive(true);
+            controladorPersonaje.canvasPersonaje.textoDerrota.SetActive(false);
+            musicaDerrota.Stop();
+            musicaVictoria.Play();
+
+            //yield return new WaitForSeconds(musicaVictoria.clip.length);
+            yield return new WaitWhile(() => musicaVictoria.isPlaying == true);
+        }
+        else
+        {
+            controladorPersonaje.canvasPersonaje.textoVictoria.SetActive(false);
+            controladorPersonaje.canvasPersonaje.textoDerrota.SetActive(true);
+            musicaDerrota.Play();
+            musicaVictoria.Stop();
+
+            //yield return new WaitForSeconds(musicaDerrota.clip.length);
+            yield return new WaitWhile(() => musicaDerrota.isPlaying == true);
+        }
+
+        SceneManager.LoadScene(0);
+    }
+
+    public bool comienzaLoop = false;
+
+    IEnumerator _Loop()
+    {
+        yield return new WaitUntil(() => comienzaLoop);
+
+        do
+        {
+            Debug.Log("HOLA, SOY UNA CORRUTINA EN LOOP");
+
+            yield return null;
+        }
+        while (etapaTerminada == false);
+
+        Debug.Log("SALI DEL LOOP");
+    }
 }
 
 [System.Serializable]
@@ -128,3 +195,4 @@ public class DatosGuardados
     public Vector3 posicion;
     public Vector3 rotacion;
 }
+

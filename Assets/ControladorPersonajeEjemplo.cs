@@ -153,7 +153,7 @@ public class ControladorPersonajeEjemplo : MonoBehaviour
         {
             Debug.Log("CHOQUE AL ENTRAR. OBJETO CHOCADO: " + collision.gameObject.name);
 
-            vidaCubo -= 10f;
+            vidaCubo -= 50f;
         }
     }
 

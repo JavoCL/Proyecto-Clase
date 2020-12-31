@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class ControladorCanvasPersonaje : MonoBehaviour
 {
+    [Header("Configuraciones Generales")]
     public ControladorEtapa controlador;
     public ControladorPersonajeEjemplo controladorPersonaje;
     public Text textoPuntaje;
@@ -16,6 +17,12 @@ public class ControladorCanvasPersonaje : MonoBehaviour
 
     public GameObject panelMenu;
     public GameObject panelGuardar;
+    public GameObject uiGameplay;
+
+    [Header("Configuraciones Victoria-Derrota")]
+    public GameObject uiFinal;
+    public GameObject textoVictoria;
+    public GameObject textoDerrota;
 
     // Start is called before the first frame update
     void Start()

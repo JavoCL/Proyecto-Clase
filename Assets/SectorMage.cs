@@ -31,17 +31,20 @@ public class SectorMage : MonoBehaviour
                 {
                     Debug.Log("HEY! BIENVENIDO. PUEDES PASAR");
                     puerta.SetActive(false);
+                    seCumplioObjetivo = true;
                 }
                 else
                 {
                     Debug.Log("NO PUEDES PASAR, NO CONSEGUISTE EL OBJETIVO");
                     puerta.SetActive(true);
+                    seCumplioObjetivo = false;
                 }
             }
             else
             {
                 Debug.Log("STOP! NO PUEDES PASAR, SECTOR EXCLUSIVO DE MAGOS");
                 puerta.SetActive(true);
+                seCumplioObjetivo = false;
             }
         }
     }
